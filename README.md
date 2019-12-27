@@ -1,0 +1,11 @@
+# Zealot Docker 镜像仓库
+
+## 依赖
+
+- Docker 1.12.0+
+- Docker Compose 1.9.0+
+
+## 部署
+
+简单的来说直接执行 `./deploy` 一键生成脚本，之后检查下 `.env` 文件无误后再执行 `docker-compose up -d` 就大功告成了！
+更为详细的说明请移步[部署文档](https://zealot.ews.im/#/deployment)。

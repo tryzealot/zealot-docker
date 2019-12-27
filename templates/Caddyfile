@@ -1,0 +1,24 @@
+{$ZEALOT_DOMAIN}:80, {$ZEALOT_DOMAIN}:443 {
+  redir 301 {
+    if {scheme} is http
+    / https://{host}{uri}
+  }
+
+  log stdout
+
+  # ssl
+  tls {$ZEALOT_CERT_EMAIL}
+
+  # serve assets of rails
+  root /app/public
+
+  proxy / http://zealot:3000 {
+    except /assets /packs /uploads /config /favicon.ico /robots.txt
+
+    transparent
+    header_upstream X-Marotagem true
+    header_upstream Host {host}
+    header_upstream X-Real-IP {remote}
+    header_upstream X-Forwarded-For {remote}
+  }
+}

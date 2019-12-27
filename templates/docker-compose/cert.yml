@@ -1,0 +1,10 @@
+  web:
+    image: abiosoft/caddy:1.0.3
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./rootfs/etc/Caddyfile:/etc/Caddyfile
+      - ./rootfs/etc/certs:/etc/certs
+      - zealot-data:/app
+    env_file: .env

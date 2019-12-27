@@ -1,0 +1,8 @@
+
+volumes:
+  zealot-data:
+    external: true
+  zealot-redis:
+    external: true
+  zealot-postgres:
+    external: true

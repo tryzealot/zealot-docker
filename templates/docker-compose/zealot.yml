@@ -1,0 +1,6 @@
+  worker:
+    <<: *defaults
+    command: [ "run_worker" ]
+  zealot:
+    <<: *defaults
+    command: [ "run_server" ]
