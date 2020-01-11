@@ -13,20 +13,21 @@ x-defaults: &defaults
     ZEALOT_REDIS_HOST: redis
     ZEALOT_POSTGRES_HOST: postgres
   volumes:
-    - zealot-data:/app
+    - zealot:/app
+    - zealot-data:/app/public/uploads
 
 services:
   redis:
     image: redis:5-alpine
     command: redis-server
     volumes:
-      - zealot-redis:/var/lib/redis/data
+      - redis:/var/lib/redis/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
   postgres:
     image: postgres:12-alpine
     volumes:
-      - zealot-postgres:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ze@l0t
     healthcheck:

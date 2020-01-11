@@ -1,5 +1,6 @@
 
 volumes:
+  zealot:
   zealot-data:
-  zealot-redis:
-  zealot-postgres:
+  redis:
+  postgres:
