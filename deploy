@@ -361,7 +361,7 @@ docker_check
 configure_env_file
 choose_deploy
 generate_docker_compose
-create_docker_volumes
+# create_docker_volumes # Moved into docker-compose.yml
 download_docker_images
 generate_secret_key
 all_done
