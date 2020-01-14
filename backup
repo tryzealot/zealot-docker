@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -e
+# Backup tools
+# this script generates a tgz file with the db dump, app uploads
+#
+# example: ./backup
+# example: ./backup /path/to/your/backup/directory
+
+SOURCE_DIR="."
+DEST_DIR=${DEST_DIR:-$SOURCE_DIR}
+
+BACKUP_DIR="$DEST_DIR/backups"
+TODAY=`date '+%Y%m%d%H%M%S'`
+DEST_FILE=$BACKUP_DIR/`hostname`-$TODAY.tar.gz
+
+mkdir -p $BACKUP_DIR
+
+backup_db () {
+  echo ""
+  echo "== Backup db =="
+  docker exec zealot-postgresql su - postgres -c 'pg_dump -O -Fc zealot -f /tmp/db.dump'
+  docker cp zealot-postgresql:/tmp/db.dump $BACKUP_DIR
+}
+
+backup_redis () {
+  echo ""
+  echo "== Backup redis =="
+  docker cp zealot-redis:/data/dump.rdb $BACKUP_DIR/redis.rdb
+}
+
+backup_zealot () {
+  echo ""
+  echo "== Backup zealot data =="
+  docker cp zealot-zealot:/app/public/uploads $BACKUP_DIR/uploads
+}
+
+compress () {
+  echo ""
+  echo "== Compress to .tar.gz file =="
+  tar cvzf $DEST_FILE -X $SOURCE_DIR/.backup-ignore $SOURCE_DIR
+}
+
+cleanup () {
+  echo
+  echo "== Cleaning up =="
+  rm -rf $BACKUP_DIR/uploads $BACKUP_DIR/db.dump $BACKUP_DIR/redis.rdb
+}
+trap cleanup ERR INT TERM HUP QUIT
+
+backup_db
+backup_redis
+backup_zealot
+compress
+cleanup
