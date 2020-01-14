@@ -82,8 +82,8 @@ download_docker_images () {
 generate_secret_key () {
   echo ""
   echo "== Generating secret key =="
-  SECRET_TOKEN=$(docker run --rm icyleafcn/mkcert ash -c 'date +%s | sha256sum | base64 | head -c 64 ; echo 2> /dev/null')
-  sed -i -e 's/^SECRET_TOKEN=.*$/SECRET_TOKEN="'"$SECRET_TOKEN"'"/' $ENV_FILE
+  SECRET_TOKEN=$(docker run --rm icyleafcn/mkcert ash -c 'openssl rand -hex 128 2> /dev/null')
+  sed -i -e 's/^SECRET_TOKEN=.*$/SECRET_TOKEN='"$SECRET_TOKEN"'/' $ENV_FILE
   clean_sed_temp_file $ENV_FILE
   echo "Secret key written to $ENV_FILE"
 }
