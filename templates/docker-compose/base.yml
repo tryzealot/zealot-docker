@@ -18,6 +18,7 @@ x-defaults: &defaults
 
 services:
   redis:
+    container_name: zealot-redis
     image: redis:5-alpine
     command: redis-server
     volumes:
@@ -25,6 +26,7 @@ services:
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
   postgres:
+    container_name: zealot-postgres
     image: postgres:12-alpine
     volumes:
       - postgres:/var/lib/postgresql/data

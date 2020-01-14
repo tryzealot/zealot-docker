@@ -1,4 +1,5 @@
   web:
+    container_name: zealot-web
     image: abiosoft/caddy:1.0.3
     ports:
       - "80:80"

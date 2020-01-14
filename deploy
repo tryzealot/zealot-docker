@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# Deploy tools
+# this script generates a docker-compose.yml.
+#
+# example: ./deploy
+# example: ./deploy --skip-update
+
 set -e
 
 SKIP_UPDATE="false"
@@ -47,6 +53,7 @@ trap cleanup ERR INT TERM HUP QUIT
 create_docker_volumes () {
   echo ""
   echo "== Creating volumes for persistent storage =="
+  echo "Created $(docker volume create --name=zealot-app)."
   echo "Created $(docker volume create --name=zealot-data)."
   echo "Created $(docker volume create --name=zealot-postgres)."
   echo "Created $(docker volume create --name=zealot-redis)."
