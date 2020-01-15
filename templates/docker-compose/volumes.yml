@@ -1,6 +1,10 @@
 
 volumes:
-  zealot:
+  zealot-app:
+    external: true
   zealot-data:
-  redis:
-  postgres:
+    external: true
+  zealot-redis:
+    external: true
+  zealot-postgres:
+    external: true

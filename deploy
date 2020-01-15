@@ -5,7 +5,7 @@
 # example: ./deploy
 # example: ./deploy --skip-update
 
-set -e
+# set -e
 
 SKIP_UPDATE="false"
 if [ "$1" == '--skip-update' ]; then
@@ -39,7 +39,7 @@ cleanup () {
     return 0;
   fi
 
-  echo
+  echo ""
   echo "== Cleaning up =="
   rm $ENV_FILE $DOCKER_COMPOSE_FILE 2> /dev/null
   docker-compose down &> /dev/null
@@ -53,6 +53,13 @@ trap cleanup ERR INT TERM HUP QUIT
 create_docker_volumes () {
   echo ""
   echo "== Creating volumes for persistent storage =="
+
+  # always remove zealot-app volume to make sure use old zealot data
+  HAS_APP_VOLUME=$(docker volume ls | grep -v DRIVER | grep zealot-app | wc -l 2> /dev/null)
+  if [ -z "$HAS_APP_VOLUME" ]; then
+    docker volume rm zealot-app
+  fi
+
   echo "Created $(docker volume create --name=zealot-app)."
   echo "Created $(docker volume create --name=zealot-data)."
   echo "Created $(docker volume create --name=zealot-postgres)."
@@ -312,6 +319,15 @@ generate_docker_compose () {
 }
 
 ##
+## Set up database
+##
+set_up_database () {
+  echo ""
+  echo "== Setting up database =="
+  docker-compose run --rm zealot bundle exec rake zealot:upgrade
+}
+
+##
 ## Current OS name
 ##
 current_os() {
@@ -369,12 +385,15 @@ print_banner
 
 docker_check
 configure_env_file
-choose_deploy
 check_zealot_domain
+choose_deploy
+
+create_docker_volumes
 generate_docker_compose
-# create_docker_volumes # Moved into docker-compose.yml
 if [ "$SKIP_UPDATE" == "false" ]; then
   download_docker_images
 fi
+
 generate_secret_key
+set_up_database
 all_done
