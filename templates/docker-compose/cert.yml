@@ -8,4 +8,5 @@
       - ./rootfs/etc/Caddyfile:/etc/Caddyfile
       - ./rootfs/etc/certs:/etc/certs
       - zealot-app:/app
+      - zealot-data:/app/public/uploads
     env_file: .env
