@@ -5,7 +5,7 @@
 # example: ./deploy
 # example: ./deploy --skip-update
 
-# set -e
+set -e
 
 SKIP_UPDATE="false"
 if [ "$1" == '--skip-update' ]; then
