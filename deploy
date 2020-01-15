@@ -41,7 +41,6 @@ cleanup () {
 
   echo ""
   echo "== Cleaning up =="
-  rm $ENV_FILE $DOCKER_COMPOSE_FILE 2> /dev/null
   docker-compose down &> /dev/null
   ZEALOT_CLEAN_UP=true
 }
