@@ -59,7 +59,6 @@ create_docker_volumes () {
     docker volume rm zealot-app
   fi
 
-  echo "Created $(docker volume create --name=zealot-app)."
   echo "Created $(docker volume create --name=zealot-data)."
   echo "Created $(docker volume create --name=zealot-postgres)."
   echo "Created $(docker volume create --name=zealot-redis)."

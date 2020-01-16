@@ -7,6 +7,5 @@
     volumes:
       - ./rootfs/etc/Caddyfile:/etc/Caddyfile
       - ./rootfs/etc/certs:/etc/certs
-      - zealot-app:/app
-      - zealot-data:/app/public/uploads
+      - zealot-data:/app/public
     env_file: .env

@@ -13,8 +13,7 @@ x-defaults: &defaults
     ZEALOT_REDIS_HOST: redis
     ZEALOT_POSTGRES_HOST: postgres
   volumes:
-    - zealot-app:/app
-    - zealot-data:/app/public/uploads
+    - zealot-data:/app/public
 
 services:
   redis:

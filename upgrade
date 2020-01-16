@@ -10,17 +10,15 @@ stop_docker_compose () {
   docker-compose down &> /dev/null
 }
 
-recreate_docker_volumes () {
+remove_unused_docker_volumes () {
   echo ""
-  echo "== Recreating zealot-app volume =="
+  echo "== Deleting zealot-app volume =="
 
   # always remove zealot-app volume to make sure use old zealot data
   HAS_APP_VOLUME=$(docker volume ls | grep -v DRIVER | grep zealot-app | wc -l 2> /dev/null)
   if [ -z "$HAS_APP_VOLUME" ]; then
     docker volume rm zealot-app
   fi
-
-  echo "Created $(docker volume create --name=zealot-app)."
 }
 
 download_docker_images () {
@@ -33,7 +31,7 @@ download_docker_images () {
 upgrade_database () {
   echo ""
   echo "== Upgrading database =="
-  docker-compose run --rm zealot bundle exec rake zealot:upgrade
+  docker-compose run --rm zealot run_upgrade
 }
 
 all_done () {
@@ -48,7 +46,7 @@ all_done () {
 
 
 stop_docker_compose
-recreate_docker_volumes
+remove_unused_docker_volumes
 download_docker_images
 upgrade_database
 all_done

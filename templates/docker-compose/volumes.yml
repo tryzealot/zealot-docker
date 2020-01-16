@@ -1,7 +1,5 @@
 
 volumes:
-  zealot-app:
-    external: true
   zealot-data:
     external: true
   zealot-redis:
