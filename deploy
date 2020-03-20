@@ -371,7 +371,7 @@ all_done () {
   echo ""
   echo "Run the following command get Zealot running:"
   echo ""
-  echo "  docker-compose up -d"
+  echo "  [sudo] docker-compose up -d"
   echo ""
 }
 

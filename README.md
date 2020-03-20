@@ -8,7 +8,7 @@
 ## 部署
 
 ```sh
-./deploy
+[sudo] ./deploy
 ```
 
 简单的来说直接执行 `./deploy` 一键生成脚本，之后检查下 `.env` 文件无误后再执行 `docker-compose up -d` 就大功告成了！
@@ -16,7 +16,7 @@
 ## 升级
 
 ```sh
-./upgrade
+[sudo] ./upgrade
 ```
 
 ## 备份
