@@ -309,7 +309,7 @@ generate_docker_compose () {
   cat $DOCKER_COMPOSE_TEMPLATE_PATH/zealot.yml >> $DOCKER_COMPOSE_FILE
   if [ "$ZEALOT_USE_SSL" == "false" ]; then
     echo "    ports:"  >> $DOCKER_COMPOSE_FILE
-    echo '      - "13000:3000"' >> $DOCKER_COMPOSE_FILE
+    echo '      - "3031:3000"' >> $DOCKER_COMPOSE_FILE
   fi
 
   cat $DOCKER_COMPOSE_TEMPLATE_PATH/volumes.yml >> $DOCKER_COMPOSE_FILE
