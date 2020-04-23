@@ -10,17 +10,6 @@ stop_docker_compose () {
   docker-compose down &> /dev/null
 }
 
-remove_unused_docker_volumes () {
-  echo ""
-  echo "== Deleting zealot-app volume =="
-
-  # always remove zealot-app volume to make sure use old zealot data
-  HAS_APP_VOLUME=$(docker volume ls | grep -v DRIVER | grep zealot-app | wc -l 2> /dev/null)
-  if [ -z "$HAS_APP_VOLUME" ]; then
-    docker volume rm zealot-app
-  fi
-}
-
 download_docker_images () {
   echo ""
   echo "== Pulling Docker images =="
@@ -46,7 +35,6 @@ all_done () {
 
 
 stop_docker_compose
-remove_unused_docker_volumes
 download_docker_images
 upgrade_database
 all_done

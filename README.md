@@ -22,7 +22,7 @@
 ## 备份
 
 ```sh
-./backup
+[sudo] ./backup
 ```
 
 更为详细的说明请移步[部署文档](https://zealot.ews.im/#/deployment)。
