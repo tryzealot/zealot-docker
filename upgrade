@@ -7,7 +7,7 @@
 set -e
 
 stop_docker_compose () {
-  docker-compose down &> /dev/null
+  docker-compose down --rmi local --remove-orphans &> /dev/null
 }
 
 download_docker_images () {

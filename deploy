@@ -16,6 +16,7 @@ ZEALOT_ROOT=$(pwd)
 EXAMPLE_ENV_FILE="${ZEALOT_ROOT}/config.env"
 ENV_FILE=".env"
 DOCKER_COMPOSE_FILE="docker-compose.yml"
+HAS_DOCKERDOCKER_COMPOSE_FILE="false"
 
 TEMPLATE_PATH="templates"
 DOCKER_COMPOSE_TEMPLATE_PATH="${TEMPLATE_PATH}/docker-compose"
@@ -41,7 +42,7 @@ cleanup () {
 
   echo ""
   echo "== Cleaning up =="
-  docker-compose down &> /dev/null
+  docker-compose down --rmi local --remove-orphans &> /dev/null
   ZEALOT_CLEAN_UP=true
 }
 trap cleanup ERR INT TERM HUP QUIT
@@ -127,6 +128,17 @@ check_zealot_domain () {
   fi
 }
 
+detect_docker_compose_file () {
+  echo ""
+  echo "== Detect docker-compose.yml =="
+  if [ -f "$DOCKER_COMPOSE_FILE" ]; then
+    if [ -n "cat $DOCKER_COMPOSE_FILE | grep '# USE SSL:'" ]; then
+      HAS_DOCKERDOCKER_COMPOSE_FILE="true"
+      echo "${DOCKER_COMPOSE_FILE} file already exists, skipped generate."
+    fi
+  fi
+}
+
 ##
 ## Start deploy flow
 ##
@@ -162,7 +174,7 @@ choose_deploy () {
 ##
 check_or_generate_caddyfile () {
   if [ -f "$CADDY_FILE" ]; then
-    echo "${CADDY_FILE} File already exists, skipped."
+    echo "${CADDY_FILE} file already exists, skipped."
   else
     echo "Creating $CADDY_FILE file"
     mkdir -p $ROOTFS_ETC_PATH
@@ -383,11 +395,15 @@ print_banner
 
 docker_check
 configure_env_file
-check_zealot_domain
-choose_deploy
+detect_docker_compose_file
 
-create_docker_volumes
-generate_docker_compose
+if [ "$HAS_DOCKERDOCKER_COMPOSE_FILE" == "false" ]; then
+  check_zealot_domain
+  choose_deploy
+  create_docker_volumes
+  generate_docker_compose
+fi
+
 if [ "$SKIP_UPDATE" == "false" ]; then
   download_docker_images
 fi
