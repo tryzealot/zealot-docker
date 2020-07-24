@@ -14,6 +14,11 @@ x-defaults: &defaults
     ZEALOT_POSTGRES_HOST: postgres
   volumes:
     - zealot-data:/app/public
+    - ./log:/app/log
+  logging:
+    options:
+      max-size: "1g"
+      max-file: "10"
 
 services:
   redis:
@@ -33,3 +38,6 @@ services:
       POSTGRES_PASSWORD: ze@l0t
     healthcheck:
       test: ["CMD-SHELL", "pg_isready", "-U", "postgres"]
+  zealot:
+    <<: *defaults
+    container_name: zealot-zealot
