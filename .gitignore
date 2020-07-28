@@ -1,4 +1,6 @@
 rootfs/
 backups/
-docker-compose.yml
+log/
 .env
+*.yml
+*.txt
