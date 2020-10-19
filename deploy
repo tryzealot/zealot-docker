@@ -87,7 +87,7 @@ generate_secret_key () {
   HAS_SECRET_TOKEN=$(grep 'SECRET_TOKEN' $ENV_FILE | awk '{split($0,a,"="); print a[2]}')
 
   if [ -z "$HAS_SECRET_TOKEN" ]; then
-    SECRET_TOKEN=$(docker run --rm icyleafcn/mkcert ash -c 'openssl rand -hex 128 2> /dev/null')
+    SECRET_TOKEN=$(docker run --rm redis:5-alpine ash -c 'head /dev/urandom | tr -dc A-Za-z0-9 | head -c 256; echo '' 2> /dev/null')
     sed -i -e 's/^SECRET_TOKEN=.*$/SECRET_TOKEN='"$SECRET_TOKEN"'/' $ENV_FILE
     clean_sed_temp_file $ENV_FILE
     echo "Secret key written to $ENV_FILE"
