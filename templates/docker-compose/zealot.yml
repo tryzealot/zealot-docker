@@ -1,8 +1,0 @@
-  worker:
-    <<: *defaults
-    container_name: zealot-worker
-    command: [ "run_worker" ]
-  zealot:
-    <<: *defaults
-    container_name: zealot-zealot
-    command: [ "run_server" ]
