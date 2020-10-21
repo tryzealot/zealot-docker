@@ -7,6 +7,12 @@
 
 set -e
 
+dc="docker-compose --no-ansi"
+dcr="$dc run --rm"
+
+log_file="zealot_install_log-`date +'%Y-%m-%d_%H-%M-%S'`.txt"
+exec &> >(tee -a "$log_file")
+
 SKIP_UPDATE="false"
 if [ "$1" == '--skip-update' ]; then
   SKIP_UPDATE="true"
@@ -42,28 +48,10 @@ cleanup () {
 
   echo ""
   echo "== Cleaning up =="
-  docker-compose down --rmi local --remove-orphans &> /dev/null
+  $dc stop &> /dev/null
   ZEALOT_CLEAN_UP=true
 }
-trap cleanup ERR INT TERM HUP QUIT
-
-##
-## Create docker volumes for zealot
-##
-create_docker_volumes () {
-  echo ""
-  echo "== Creating volumes for persistent storage =="
-
-  # always remove zealot-app volume to make sure use old zealot data
-  HAS_APP_VOLUME=$(docker volume ls | grep -v DRIVER | grep zealot-app | wc -l 2> /dev/null)
-  if [ -z "$HAS_APP_VOLUME" ]; then
-    docker volume rm zealot-app
-  fi
-
-  echo "Created $(docker volume create --name=zealot-data)."
-  echo "Created $(docker volume create --name=zealot-postgres)."
-  echo "Created $(docker volume create --name=zealot-redis)."
-}
+trap cleanup ERR INT TERM
 
 ##
 ## Configuring env file
@@ -85,7 +73,7 @@ configure_env_file () {
 download_docker_images () {
   echo ""
   echo "== Pulling Docker images =="
-  docker-compose pull
+  $dc pull
   echo "Docker images pulled."
 }
 
@@ -99,7 +87,7 @@ generate_secret_key () {
   HAS_SECRET_TOKEN=$(grep 'SECRET_TOKEN' $ENV_FILE | awk '{split($0,a,"="); print a[2]}')
 
   if [ -z "$HAS_SECRET_TOKEN" ]; then
-    SECRET_TOKEN=$(docker run --rm icyleafcn/mkcert ash -c 'openssl rand -hex 128 2> /dev/null')
+    SECRET_TOKEN=$(docker run --rm redis:5-alpine ash -c 'head /dev/urandom | tr -dc A-Za-z0-9 | head -c 256; echo '' 2> /dev/null')
     sed -i -e 's/^SECRET_TOKEN=.*$/SECRET_TOKEN='"$SECRET_TOKEN"'/' $ENV_FILE
     clean_sed_temp_file $ENV_FILE
     echo "Secret key written to $ENV_FILE"
@@ -269,6 +257,76 @@ enable_rails_serve_static_files () {
 }
 
 ##
+## Create docker volumes for zealot
+##
+create_docker_volumes () {
+  echo ""
+  echo "== Creating volumes for persistent storage =="
+
+  # always remove zealot-app volume to make sure use old zealot data
+  HAS_APP_VOLUME=$(docker volume ls | grep -v DRIVER | grep zealot-app | wc -l 2> /dev/null)
+  if [ -z "$HAS_APP_VOLUME" ]; then
+    docker volume rm zealot-app
+  fi
+
+  echo "Created $(docker volume create --name=zealot-data)."
+  echo "Created $(docker volume create --name=zealot-postgres)."
+  echo "Created $(docker volume create --name=zealot-redis)."
+
+  cat $DOCKER_COMPOSE_TEMPLATE_PATH/external-volumes.yml >> $DOCKER_COMPOSE_FILE
+}
+
+configure_local_docker_volumes() {
+  echo ""
+  echo "== Configuring docker local volumes =="
+  echo "Which path do you want to storage?"
+  printf "ZEALOT_PATH="
+  read zealot_path
+
+  if [ -z "$zealot_path" ]; then
+    echo "Read PATH failed, Quitting"
+    exit
+  else
+    mkdir -p "$zealot_path/redis"
+    mkdir -p "$zealot_path/zealot"
+    mkdir -p "$zealot_path/postgres"
+
+    echo "You path is: $zealot_path"
+    LOCAL_VOLUMES_FILE="$DOCKER_COMPOSE_TEMPLATE_PATH/local-volumes.yml"
+    escaped_zealot_path=$(echo $zealot_path | sed 's/\//\\\//g')
+    sed -i -e 's/ZEALOT_PATH/'"$escaped_zealot_path"'/' $LOCAL_VOLUMES_FILE
+    clean_sed_temp_file $LOCAL_VOLUMES_FILE
+
+    echo "Local docker volumes configured to $zealot_path"
+    cat $DOCKER_COMPOSE_TEMPLATE_PATH/local-volumes.yml >> $DOCKER_COMPOSE_FILE
+  fi
+}
+
+choose_volumes () {
+  echo ""
+  echo "== Configuring Docker volumes =="
+  printf "Which way do you choose to storage zealot data?\n\
+  Use Docker [V]olumes (default)\n\
+  Use [L]ocal file system\n"
+  read -n 1 action
+  echo ""
+
+  local STORAGE=volumes
+  case "$action" in
+    V | v )
+      create_docker_volumes;;
+    L | l )
+      configure_local_docker_volumes;;
+    * )
+      ;;
+  esac
+
+  if [ -z "$action" ]; then
+    create_docker_volumes
+  fi
+}
+
+##
 ## Check and install docker
 ##
 check_and_install_docker () {
@@ -321,28 +379,28 @@ generate_docker_compose () {
   echo "# USE SSL: ${ZEALOT_USE_SSL}" >> $DOCKER_COMPOSE_FILE
   cat $DOCKER_COMPOSE_TEMPLATE_PATH/base.yml >> $DOCKER_COMPOSE_FILE
 
-  if [ ! "$ZEALOT_USE_SSL" == "false" ]; then
-    cat $DOCKER_COMPOSE_TEMPLATE_PATH/cert.yml >> $DOCKER_COMPOSE_FILE
-  fi
-
-  cat $DOCKER_COMPOSE_TEMPLATE_PATH/zealot.yml >> $DOCKER_COMPOSE_FILE
   if [ "$ZEALOT_USE_SSL" == "false" ]; then
     echo "    ports:"  >> $DOCKER_COMPOSE_FILE
     echo '      - "3031:3000"' >> $DOCKER_COMPOSE_FILE
   fi
 
-  cat $DOCKER_COMPOSE_TEMPLATE_PATH/volumes.yml >> $DOCKER_COMPOSE_FILE
+  if [ ! "$ZEALOT_USE_SSL" == "false" ]; then
+    cat $DOCKER_COMPOSE_TEMPLATE_PATH/cert.yml >> $DOCKER_COMPOSE_FILE
+  fi
+
+  choose_volumes
+
   echo "Generated $DOCKER_COMPOSE_FILE"
 }
 
-##
-## Set up database
-##
-set_up_database () {
-  echo ""
-  echo "== Setting up database =="
-  docker-compose run --rm zealot bundle exec rake zealot:upgrade
-}
+# ##
+# ## Set up database
+# ##
+# set_up_database () {
+#   echo ""
+#   echo "== Setting up database =="
+#   $dcr zealot bundle exec rake zealot:upgrade
+# }
 
 ##
 ## Current OS name
@@ -357,6 +415,16 @@ current_os() {
 docker_check() {
   check_and_install_docker
   check_and_install_docker_compose
+}
+
+remove_old_containers() {
+  if [ -f "$DOCKER_COMPOSE_FILE" ]; then
+    echo ""
+    echo "== Remove older versions of zealot =="
+    # Clean up old stuff and ensure nothing is working while we install/update
+    $dc down --rmi local --remove-orphans
+    rm docker-compose.yml
+  fi
 }
 
 ##
@@ -388,7 +456,7 @@ all_done () {
   docker-compose down &> /dev/null
 
   echo ""
-  echo "Run the following command get Zealot running:"
+  echo "You're all done! Run the following command get Zealot running:"
   echo ""
   echo "  [sudo] docker-compose up -d"
   echo ""
@@ -399,15 +467,14 @@ all_done () {
 ###################################
 
 print_banner
-
 docker_check
+remove_old_containers
 configure_env_file
 detect_docker_compose_file
 
 if [ "$HAS_DOCKERDOCKER_COMPOSE_FILE" == "false" ]; then
   check_zealot_domain
   choose_deploy
-  create_docker_volumes
   generate_docker_compose
 fi
 
@@ -416,5 +483,4 @@ if [ "$SKIP_UPDATE" == "false" ]; then
 fi
 
 generate_secret_key
-set_up_database
 all_done
