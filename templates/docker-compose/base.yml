@@ -4,10 +4,8 @@ x-defaults: &defaults
   restart: unless-stopped
   image: icyleafcn/zealot:nightly
   depends_on:
-    redis:
-      condition: service_healthy
-    postgres:
-      condition: service_healthy
+    - redis
+    - postgres
   env_file: .env
   environment:
     ZEALOT_REDIS_HOST: redis
@@ -15,6 +13,8 @@ x-defaults: &defaults
   volumes:
     - zealot-data:/app/public
     - ./log:/app/log
+  healthcheck:
+    test: ["CMD-SHELL", "wget -q --spider --proxy=off localhost:3000/health || exit 1"]
   logging:
     options:
       max-size: "1g"
@@ -37,7 +37,7 @@ services:
     environment:
       POSTGRES_PASSWORD: ze@l0t
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-U", "postgres"]
+      test: ["CMD", "pg_isready", "-U", "postgres"]
   zealot:
     <<: *defaults
     container_name: zealot-zealot
