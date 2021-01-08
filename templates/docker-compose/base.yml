@@ -2,7 +2,7 @@ version: '2.1'
 
 x-defaults: &defaults
   restart: unless-stopped
-  image: icyleafcn/zealot:nightly
+  image: tryzealot/zealot:nightly
   depends_on:
     - redis
     - postgres
