@@ -19,6 +19,8 @@ x-defaults: &defaults
     options:
       max-size: "1g"
       max-file: "10"
+      max-buffer-size: "4m"
+      mode: non-blocking
 
 services:
   redis:
