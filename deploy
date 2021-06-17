@@ -294,7 +294,7 @@ configure_local_docker_volumes() {
     echo "You path is: $zealot_path"
     LOCAL_VOLUMES_FILE="$DOCKER_COMPOSE_TEMPLATE_PATH/local-volumes.yml"
     escaped_zealot_path=$(echo $zealot_path | sed 's/\//\\\//g')
-    sed -i -e 's/ZEALOT_PATH/'"$escaped_zealot_path"'/' $LOCAL_VOLUMES_FILE
+    sed -i -e 's/\/tmp\/zealot/'"$escaped_zealot_path"'/g' $LOCAL_VOLUMES_FILE
     clean_sed_temp_file $LOCAL_VOLUMES_FILE
 
     echo "Local docker volumes configured to $zealot_path"
