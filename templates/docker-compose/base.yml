@@ -1,4 +1,4 @@
-version: '2.1'
+version: "2.1"
 
 x-defaults: &defaults
   restart: unless-stopped
@@ -16,12 +16,12 @@ x-defaults: &defaults
   healthcheck:
     test: ["CMD-SHELL", "wget -q --spider --proxy=off localhost:3000/health || exit 1"]
   logging:
-    driver: json-file
+    driver: "json-file"
     options:
-      max-size: 1g
-      max-file: 10
-      max-buffer-size: 4m
-      mode: non-blocking
+      max-size: "1g"
+      max-file: "10"
+      max-buffer-size: "4m"
+      mode: "non-blocking"
 
 services:
   redis:
