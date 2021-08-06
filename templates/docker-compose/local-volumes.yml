@@ -5,16 +5,16 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: abc/zealot
+      device: /tmp/zealot
   zealot-redis:
     driver: local
     driver_opts:
       o: bind
       type: none
-      device: abc/redis
+      device: /tmp/redis
   zealot-postgres:
     driver: local
     driver_opts:
       o: bind
       type: none
-      device: abc/postgres
+      device: /tmp/postgres
