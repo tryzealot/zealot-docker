@@ -11,10 +11,11 @@ x-defaults: &defaults
     ZEALOT_REDIS_HOST: redis
     ZEALOT_POSTGRES_HOST: postgres
   volumes:
-    - zealot-data:/app/public
+    - zealot-uploads:/app/public/uploads
+    - zealot-backup:/app/public/backup
     - ./log:/app/log
   healthcheck:
-    test: ["CMD-SHELL", "wget -q --spider --proxy=off localhost:3000/health || exit 1"]
+    test: ["CMD-SHELL", "wget -q --spider --proxy=off localhost/health || exit 1"]
   logging:
     driver: "json-file"
     options:

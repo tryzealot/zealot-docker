@@ -1,6 +1,8 @@
 
 volumes:
-  zealot-data:
+  zealot-uploads:
+    external: true
+  zealot-backup:
     external: true
   zealot-redis:
     external: true
