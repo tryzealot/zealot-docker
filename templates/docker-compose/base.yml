@@ -1,7 +1,10 @@
-version: "2.1"
+version: "3.8"
+
+x-restart-policy: &restart_policy
+  restart: unless-stopped
 
 x-defaults: &defaults
-  restart: unless-stopped
+  <<: *restart_policy
   image: ghcr.io/tryzealot/zealot:nightly
   depends_on:
     - redis
@@ -26,7 +29,7 @@ x-defaults: &defaults
 
 services:
   redis:
-    container_name: zealot-redis
+    <<: *restart_policy
     image: redis:5-alpine
     command: redis-server
     volumes:
@@ -34,7 +37,7 @@ services:
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
   postgres:
-    container_name: zealot-postgres
+    <<: *restart_policy
     image: postgres:12-alpine
     volumes:
       - zealot-postgres:/var/lib/postgresql/data
@@ -44,4 +47,3 @@ services:
       test: ["CMD", "pg_isready", "-U", "postgres"]
   zealot:
     <<: *defaults
-    container_name: zealot-zealot
