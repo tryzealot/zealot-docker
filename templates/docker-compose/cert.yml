@@ -9,3 +9,5 @@
       - ./rootfs/etc/certs:/etc/certs
       - zealot-data:/app/public
     env_file: .env
+    environment:
+      ACME_AGREE: "true"
