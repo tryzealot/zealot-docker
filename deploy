@@ -6,7 +6,7 @@
 # example: ./deploy --skip-update
 #
 # Mostly of scripts fork from https://github.com/getsentry/onpremise
-# Orginal License: https://github.com/getsentry/onpremise/blob/master/LICENSE
+# Original License: https://github.com/getsentry/onpremise/blob/master/LICENSE
 
 source "$(dirname $0)/scripts/function.sh"
 
