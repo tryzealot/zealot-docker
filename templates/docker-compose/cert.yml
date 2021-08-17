@@ -1,13 +1,11 @@
   web:
-    container_name: zealot-web
-    image: abiosoft/caddy:1.0.3
+    image: caddy:2-alpine
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./rootfs/etc/Caddyfile:/etc/Caddyfile
-      - ./rootfs/etc/certs:/etc/certs
-      - zealot-data:/app/public
+      - ./rootfs/etc/Caddyfile:/etc/Caddyfile:ro
+      - ./rootfs/etc/certs:/etc/certs:ro
     env_file: .env
     environment:
       ACME_AGREE: "true"
