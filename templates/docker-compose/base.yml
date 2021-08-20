@@ -10,9 +10,6 @@ x-defaults: &defaults
     - redis
     - postgres
   env_file: .env
-  environment:
-    ZEALOT_REDIS_HOST: redis
-    ZEALOT_POSTGRES_HOST: postgres
   volumes:
     - zealot-uploads:/app/public/uploads
     - zealot-backup:/app/public/backup
