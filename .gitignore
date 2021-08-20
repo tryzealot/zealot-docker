@@ -1,4 +1,4 @@
-rootfs/
+caddy/
 backups/
 log/
 .env
