@@ -4,8 +4,8 @@
       - "80:80"
       - "443:443"
     volumes:
-      - ./rootfs/etc/Caddyfile:/etc/Caddyfile:ro
-      - ./rootfs/etc/certs:/etc/certs:ro
+      - ./caddy/etc/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy/etc/caddy/certs:/etc/caddy/certs:ro
     env_file: .env
     environment:
       ACME_AGREE: "true"
