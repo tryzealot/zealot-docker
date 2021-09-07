@@ -24,6 +24,7 @@ CADDY_ROOTFS_PATH="/etc/caddy"
 CADDYFILE_NAME="Caddyfile"
 CERTS_NAME="certs"
 
+OS_VERSION=$(uname -sm)
 
 if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
   _group="::group::"
@@ -41,6 +42,17 @@ dcr="$dc run --rm"
 ##
 current_os() {
   echo `uname -s`
+}
+
+##
+## OS version
+##
+get_os_version () {
+  if [ -z "$(which lsb_release || echo "" 2> /dev/null)" ]; then
+    OS_VERSION=$(uname -sm)
+  else
+    OS_VERSION=$(lsb_release -ds)
+  fi
 }
 
 ##

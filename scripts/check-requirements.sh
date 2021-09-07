@@ -65,6 +65,7 @@ check_and_install_docker_compose () {
 
 echo "${_group}Checking requirements ..."
 
+get_os_version
 get_docker_compose_version
 check_and_install_docker
 check_and_install_docker_compose
@@ -79,7 +80,7 @@ if [[ "$(ver $COMPOSE_VERSION)" -lt "$(ver $MIN_COMPOSE_VERSION)" ]]; then
   exit 1
 fi
 
-echo "Current OS: `uname -sm`"
+echo "Current OS: ${OS_VERSION}"
 echo "Docker version: ${DOCKER_VERSION}"
 echo "Docker Compose version: ${COMPOSE_VERSION}"
 
