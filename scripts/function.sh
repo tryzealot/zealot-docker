@@ -34,7 +34,8 @@ else
   _endgroup=""
 fi
 
-dc="docker-compose --ansi never"
+dc_base="$(docker compose version &> /dev/null && echo 'docker compose' || echo 'docker-compose')"
+dc="$dc_base --ansi never --env-file ${ENV_FILE}"
 dcr="$dc run --rm"
 
 ##

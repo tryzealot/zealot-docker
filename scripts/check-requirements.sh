@@ -11,14 +11,7 @@ function ver () { echo "$@" | awk -F. '{ printf("%d%03d%03d", $1,$2,$3); }'; }
 ## Check docker compose version (v1 and v2)
 ##
 function get_docker_compose_version () {
-  local INFO=$($dc --version)
-  if [[ $INFO == *"docker-compose"* ]]; then
-    # docker-compose version 1.29.2, build 5becea4c
-    COMPOSE_VERSION=$(echo $INFO | sed 's/docker-compose version \(.\{1,\}\),.*/\1/')
-  else
-    # Docker Compose version v2.0.0-beta.6
-    COMPOSE_VERSION=$(echo $INFO | awk '{print $NF}' | sed 's/^v//' | sed 's/\(.\{1,\}\),.*/\1/')
-  fi
+  COMPOSE_VERSION=$(docker-compose version | head -n1 | sed -E 's/^.* version:? v?([0-9.]+),?.*$/\1/')
 }
 
 ##
