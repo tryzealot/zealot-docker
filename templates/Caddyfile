@@ -2,4 +2,4 @@
 
 tls {$ZEALOT_CERT_EMAIL}
 log
-reverse_proxy @static zealot
+reverse_proxy zealot
