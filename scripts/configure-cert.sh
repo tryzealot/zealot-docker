@@ -1,18 +1,14 @@
-echo "${_group}Configuring cert file(s) ..."
-
 CADDY_VOLUME_PATH="${CADDY_PATH}${CADDY_ROOTFS_PATH}"
 CADDY_FILE="${CADDY_VOLUME_PATH}/${CADDYFILE_NAME}"
 CERTS_PATH="${CADDY_VOLUME_PATH}/${CERTS_NAME}"
 DOCKER_CADDY_FILE="${CADDY_ROOTFS_PATH}/${CADDYFILE_NAME}"
 DOCKER_CERTS_PATH="${CADDY_ROOTFS_PATH}/${CERTS_NAME}"
 
-
 ##
 ## Check or generate Caddyfile
 ##
 check_or_generate_caddyfile () {
   mkdir -p $CADDY_VOLUME_PATH
-  mkdir -p $CERTS_PATH
   if [ -f "$CADDY_FILE" ]; then
     echo "${CADDY_FILE} file already exists, skipped."
   else
@@ -56,13 +52,18 @@ check_or_generate_selfsigned_ssl () {
   CERT_FILE="${CERTS_PATH}/${CERT_NAME}"
   KEY_FILE="${CERTS_PATH}/${KEY_NAME}"
 
-  docker run --rm --name zealot-mkcert \
-    -v $(pwd)/$CERTS_PATH:/root/.local/share/mkcert \
+  CERT_TMP_PATH="/tmp/zealot-cert-$(date '+%Y%m%d%H%M%S')"
+  mkdir -p $CERT_TMP_PATH
+  mkdir -p $CERTS_PATH
+
+  $d run --rm --name zealot-mkcert \
+    -v $CERT_TMP_PATH:/root/.local/share/mkcert \
     icyleafcn/mkcert \
     /bin/ash -c "mkcert -install && mkcert ${DOMAIN_NAME}" &> /dev/null
 
   while true; do
     if [ -f "$CERT_FILE" ] && [ -f "$KEY_FILE" ];then
+      mv $CERT_TMP_PATH $CERTS_PATH
       sed -i -e 's/^.*ZEALOT_CERT=.*$/ZEALOT_CERT='"$CERT_NAME"'/' $ENV_FILE
       sed -i -e 's/^.*ZEALOT_CERT_KEY=.*$/ZEALOT_CERT_KEY='"$KEY_NAME"'/' $ENV_FILE
       clean_sed_temp_file $ENV_FILE
@@ -101,9 +102,9 @@ choose_deploy () {
 
   local SSL_NAME=letsencrypt
   case "$action" in
-    L | l )
+    L|l)
       check_or_configure_letsencrypt_ssl;;
-    S | s )
+    S|s)
       check_or_generate_selfsigned_ssl;;
     * )
       SSL_NAME=false
@@ -113,21 +114,24 @@ choose_deploy () {
   if [ -z "$action" ]; then
     check_or_configure_letsencrypt_ssl
   fi
-
-  echo "${_endgroup}"
 }
+
+##################
+# Main
+##################
+echo "${_group}Configuring cert file(s) ..."
 
 if [ -f "$DOCKER_COMPOSE_FILE" ]; then
   if [ -n "cat $DOCKER_COMPOSE_FILE | grep '# USE SSL:'" ]; then
-    HAS_DOCKERDOCKER_COMPOSE_FILE="true"
+    HAS_DOCKER_COMPOSE_FILE="true"
     echo "Cert already configured, skipped"
   else
-    echo "Detected docker-compose file AND its not writon by zealot, at your own risk!!!"
+    echo "Detected docker-compose.yml file AND its not writon by zealot, at your own risk!!!"
   fi
 fi
 
-if [ "$HAS_DOCKERDOCKER_COMPOSE_FILE" == "false" ]; then
+if [ "$HAS_DOCKER_COMPOSE_FILE" == "false" ]; then
   choose_deploy
-else
-  echo "${_endgroup}"
 fi
+
+echo "${_endgroup}"

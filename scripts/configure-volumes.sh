@@ -1,19 +1,22 @@
-echo "${_group}Configuring Docker volumes ..."
-
 ##
 ## Create docker volumes for zealot
 ##
 create_docker_volumes () {
   # always remove zealot-app volume to make sure use old zealot data
-  local HAS_APP_VOLUME=$(docker volume ls | grep -v DRIVER | grep zealot-app | wc -l 2> /dev/null)
+  local HAS_APP_VOLUME=$($d volume ls | grep -v DRIVER | grep zealot-app | wc -l 2> /dev/null)
   if [ -z "$HAS_APP_VOLUME" ]; then
-    docker volume rm zealot-app
+    $d volume rm zealot-app
   fi
 
-  echo "Created $(docker volume create --name=zealot-uploads)."
-  echo "Created $(docker volume create --name=zealot-backup)."
-  echo "Created $(docker volume create --name=zealot-postgres)."
-  echo "Created $(docker volume create --name=zealot-redis)."
+  dv="$d volume create --name"
+  if [ "$d" != "docker" ]; then
+    dv="$d volume create"
+  fi
+
+  echo "Created $($dv zealot-uploads)."
+  echo "Created $($dv zealot-backup)."
+  echo "Created $($dv zealot-postgres)."
+  echo "Created $($dv zealot-redis)."
 
   cat $TEMPLATE_DOCKER_COMPOSE_PATH/external-volumes.yml >> $DOCKER_COMPOSE_FILE
   echo "Exteral volumes write to file: $DOCKER_COMPOSE_FILE"
@@ -50,16 +53,16 @@ configure_local_docker_volumes() {
 
 choose_volumes () {
   printf "Which way do you choose to storage zealot data?\n\
-  Use Docker [V]olumes (default)\n\
+  Use Docker/Nerdctl [V]olumes (default)\n\
   Use [L]ocal file system\n"
   read -n 1 action
   echo ""
 
   local STORAGE=volumes
   case "$action" in
-    V | v )
+    V|v)
       create_docker_volumes;;
-    L | l )
+    L|l)
       configure_local_docker_volumes;;
     * )
       ;;
@@ -70,6 +73,10 @@ choose_volumes () {
   fi
 }
 
+##################
+# Main
+##################
+echo "${_group}Configuring Docker volumes ..."
 
 VOLUMES_EXISTS=$(grep -cE "^(\s+)zealot\-(\w+):" $DOCKER_COMPOSE_FILE || echo 0)
 if [ "$VOLUMES_EXISTS" -eq 4 ]; then

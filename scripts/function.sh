@@ -13,7 +13,7 @@ ZEALOT_ROOT=$(dirname $0)
 EXAMPLE_ENV_FILE="config.env"
 ENV_FILE=".env"
 DOCKER_COMPOSE_FILE="docker-compose.yml"
-HAS_DOCKERDOCKER_COMPOSE_FILE="false"
+HAS_DOCKER_COMPOSE_FILE="false"
 
 TEMPLATE_PATH="templates"
 TEMPLATE_DOCKER_COMPOSE_PATH="${TEMPLATE_PATH}/docker-compose"
@@ -24,8 +24,30 @@ CADDY_ROOTFS_PATH="/etc/caddy"
 CADDYFILE_NAME="Caddyfile"
 CERTS_NAME="certs"
 
-OS_VERSION=$(uname -sm)
+CURRENT_OS=$(uname -s)
+CURRENT_OS_VERSION=$(uname -sm)
+if ! [ -z "$(which lsb_release || echo "" 2> /dev/null)" ]; then
+  CURRENT_OS_VERSION=$(lsb_release -ds)
+fi
 
+d="docker"
+dc_base="$($d compose version &> /dev/null && echo 'docker compose' || echo 'docker-compose')"
+dc="$dc_base --ansi never --env-file ${ENV_FILE}"
+dcr="$dc run --rm"
+
+if ! [ -z "$(which lima 2> /dev/null)"  ]; then
+  d="lima nerdctl"
+  dc_base="$d compose"
+  dc="$dc_base --env-file ${ENV_FILE}"
+  dcr="$dc run --rm"
+elif ! [ -z "$(which nerdctl 2> /dev/null)"  ]; then
+  d="nerdctl"
+  dc_base="$d compose"
+  dc="$dc_base --env-file ${ENV_FILE}"
+  dcr="$dc run --rm"
+fi
+
+# Printing of group
 if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
   _group="::group::"
   _endgroup="::endgroup::"
@@ -33,28 +55,6 @@ else
   _group="▶ "
   _endgroup=""
 fi
-
-dc_base="$(docker compose version &> /dev/null && echo 'docker compose' || echo 'docker-compose')"
-dc="$dc_base --ansi never --env-file ${ENV_FILE}"
-dcr="$dc run --rm"
-
-##
-## Current OS name
-##
-current_os() {
-  echo `uname -s`
-}
-
-##
-## OS version
-##
-get_os_version () {
-  if [ -z "$(which lsb_release || echo "" 2> /dev/null)" ]; then
-    OS_VERSION=$(uname -sm)
-  else
-    OS_VERSION=$(lsb_release -ds)
-  fi
-}
 
 ##
 ## Clean sed temp file (always -e as suffix) if exists

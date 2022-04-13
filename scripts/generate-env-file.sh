@@ -1,3 +1,6 @@
+##################
+# Main
+##################
 echo "${_group}Generating .env file ..."
 
 if [ -f "$ENV_FILE" ]; then

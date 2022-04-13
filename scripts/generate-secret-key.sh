@@ -1,3 +1,6 @@
+##################
+# Main
+##################
 echo "${_group}Generating secret key ..."
 
 HAS_SECRET_TOKEN=$(grep 'SECRET_TOKEN' $ENV_FILE | awk '{split($0,a,"="); print a[2]}')

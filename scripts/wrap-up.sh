@@ -18,7 +18,7 @@ else
   echo ""
   echo "You're all done! Run the following command to get Zealot running:"
   echo ""
-  echo "  [sudo] docker-compose up -d"
+  echo "  [sudo] $dc up -d"
   echo ""
   echo "-----------------------------------------------------------------"
   echo ""

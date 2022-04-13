@@ -1,3 +1,6 @@
+##################
+# Main
+##################
 echo "${_group}Fetching Docker images ..."
 
 if [ "$SKIP_UPDATE" == "false" ]; then

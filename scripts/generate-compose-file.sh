@@ -1,3 +1,6 @@
+##################
+# Main
+##################
 echo "${_group}Generating docker-compose.file ..."
 
 if [ -f "$DOCKER_COMPOSE_FILE" ]; then

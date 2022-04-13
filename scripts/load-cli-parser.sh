@@ -1,5 +1,3 @@
-echo "${_group}Parsing command line ..."
-
 MINIMIZE_DOWNTIME="${MINIMIZE_DOWNTIME:-}"
 SKIP_UPDATE="${SKIP_UPDATE:-"false"}"
 
@@ -27,6 +25,11 @@ Options:
                         This option might not reload all configuration, and is only meant for in-place upgrades.
 EOF
 }
+
+##################
+# Main
+##################
+echo "${_group}Parsing command line ..."
 
 while (( $# )); do
   case "$1" in

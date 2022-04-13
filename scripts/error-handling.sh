@@ -1,5 +1,3 @@
-echo "${_group}Setting up error handling ..."
-
 # Courtesy of https://stackoverflow.com/a/2183063/90297
 trap_with_arg() {
   func="$1" ; shift
@@ -32,6 +30,9 @@ cleanup () {
 }
 trap_with_arg cleanup ERR INT TERM EXIT
 
+##################
+# Main
+##################
+echo "${_group}Setting up error handling ..."
 echo "ZEALOT_CLEAN_UP=${ZEALOT_CLEAN_UP}"
-
 echo "${_endgroup}"

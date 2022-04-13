@@ -10,9 +10,12 @@
 
 source "$(dirname $0)/scripts/function.sh"
 
+# Prepare
 source "scripts/load-cli-parser.sh"
 source "scripts/error-handling.sh"
 source "scripts/check-requirements.sh"
+
+# Core
 source "scripts/generate-env-file.sh"
 source "scripts/generate-secret-key.sh"
 source "scripts/generate-domain.sh"

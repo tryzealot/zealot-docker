@@ -1,3 +1,6 @@
+##################
+# Main
+##################
 echo "${_group}Generating domain ..."
 
 DOMAIN_FROM_USER=0

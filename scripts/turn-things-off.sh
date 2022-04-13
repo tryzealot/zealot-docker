@@ -1,10 +1,15 @@
-echo "${_group}Turning things off ..."
+##################
+# Main
+##################
+echo "${_group}Parsing command line ..."
 
-if [[ -n "$MINIMIZE_DOWNTIME" ]]; then
-  # Stop everything but proxy service
-  $dc rm -fsv $($dc config --services | grep -v -E '^(web)$')
-else
-  $dc down -t $STOP_TIMEOUT --rmi local --remove-orphans
+if [ "$d" == "docker" ]; then
+  echo "${_group}Turning things off ..."
+  if [[ -n "$MINIMIZE_DOWNTIME" ]]; then
+    # Stop everything but proxy service
+    $dc rm -fsv $($dc config --services | grep -v -E '^(web)$')
+  else
+    $dc down -t $STOP_TIMEOUT --rmi local --remove-orphans
+  fi
+  echo "${_endgroup}"
 fi
-
-echo "${_endgroup}"
