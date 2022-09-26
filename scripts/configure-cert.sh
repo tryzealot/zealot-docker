@@ -59,7 +59,7 @@ check_or_generate_selfsigned_ssl () {
   docker run --rm --name zealot-mkcert \
     -v $(pwd)/$CERTS_PATH:/root/.local/share/mkcert \
     icyleafcn/mkcert \
-    /bin/ash -c "mkcert -install && mkcert ${DOMAIN_NAME}" &> /dev/null
+    /bin/ash -c "mkcert -install && mkcert ${DOMAIN_NAME}" 1> /dev/null
 
   while true; do
     if [ -f "$CERT_FILE" ] && [ -f "$KEY_FILE" ];then
