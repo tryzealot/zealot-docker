@@ -27,7 +27,7 @@ x-defaults: &defaults
 services:
   redis:
     <<: *restart_policy
-    image: redis:5-alpine
+    image: redis:7-alpine
     command: redis-server
     volumes:
       - zealot-redis:/var/lib/redis/data
@@ -35,7 +35,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
   postgres:
     <<: *restart_policy
-    image: postgres:12-alpine
+    image: postgres:14-alpine
     volumes:
       - zealot-postgres:/var/lib/postgresql/data
     environment:

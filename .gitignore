@@ -1,5 +1,7 @@
 caddy/
 backups/
+out/
+certs/
 log/
 .env
 *.yml
