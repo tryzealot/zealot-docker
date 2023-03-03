@@ -62,7 +62,7 @@ get_os_version () {
 clean_sed_temp_file () {
   local FILENAME=$1
   if [ -f "${FILENAME}-e" ]; then
-    rm ${FILENAME}-e
+    rm -f ${FILENAME}-e
   fi
 }
 

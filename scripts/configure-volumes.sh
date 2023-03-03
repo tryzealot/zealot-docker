@@ -33,16 +33,11 @@ configure_local_docker_volumes() {
     mkdir -p "$stored/redis"
     mkdir -p "$stored/postgres"
 
-    local LOCAL_VOLUMES_FILE="$TEMPLATE_DOCKER_COMPOSE_PATH/local-volumes.yml"
-    local TEMP_VOLUMES_FILE="/tmp/local-volumes.yml"
-    cp $LOCAL_VOLUMES_FILE $TEMP_VOLUMES_FILE
-
-    escaped_zealot_path=$(echo $stored | sed 's/\//\\\//g')
-    sed -i -e 's/\/tmp/'"$escaped_zealot_path"'/g' $TEMP_VOLUMES_FILE
-    clean_sed_temp_file $TEMP_VOLUMES_FILE
-
-    cat $TEMP_VOLUMES_FILE >> $DOCKER_COMPOSE_FILE
-    rm $TEMP_VOLUMES_FILE
+    sed -i -e 's|zealot-uploads|'"$stored"'/uploads|g' $DOCKER_COMPOSE_FILE
+    sed -i -e 's|zealot-backup|'"$stored"'/backup|g' $DOCKER_COMPOSE_FILE
+    sed -i -e 's|zealot-redis|'"$stored"'/redis|g' $DOCKER_COMPOSE_FILE
+    sed -i -e 's|zealot-postgres|'"$stored"'/postgres|g' $DOCKER_COMPOSE_FILE
+    clean_sed_temp_file $DOCKER_COMPOSE_FILE
 
     echo "Local volumes '$stored' write to file: $DOCKER_COMPOSE_FILE"
   fi
