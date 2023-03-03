@@ -30,7 +30,7 @@ services:
     image: redis:7-alpine
     command: redis-server
     volumes:
-      - zealot-redis:/var/lib/redis/data
+      - zealot-redis:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
   postgres:
