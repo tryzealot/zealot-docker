@@ -3,7 +3,7 @@
 ## 依赖 Requirements
 
 - Docker 20.10.0+
-- Docker Compose 1.28.0+
+- Docker Compose 2.0.1+
 
 ## 部署 Deploy
 
@@ -18,7 +18,7 @@ you just need to run the ./deploy script to automatically generate it, then chec
 ## 升级 Upgrade
 
 ```sh
-[sudo] ./upgrade
+[sudo] ./deploy
 ```
 
 ## 备份 Backup
