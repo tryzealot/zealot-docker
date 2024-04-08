@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Zealot 问题 | Zealot issue report
+    url: https://github.com/tryzealot/zealot/issues/new?assignees=&labels=bug&projects=&template=bug_report.yaml&title=%5BBug%5D%3A+
+    about: Zealot 服务的各种问题 | Zealot service any problems
+  - name: 电报技术讨论 | Chat on Telegram
+    url: https://t.me/+csa3Y2KOx44wMGRl
+    about: 开放技术沟通不意味着解答任何问题，发言前请带着脑子思考 | Open technical communication does not mean answering any questions, please think with your head before you speak
