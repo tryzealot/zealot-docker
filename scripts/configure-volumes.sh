@@ -62,9 +62,8 @@ choose_volumes () {
   fi
 }
 
-
-VOLUMES_EXISTS=$(grep -qcE "^(\s+)zealot\-(\w+):" $DOCKER_COMPOSE_FILE || echo 0)
-if [ "$VOLUMES_EXISTS" -eq 3 ]; then
+VOLUMES_EXISTS=$(grep -cE "^(\s+)zealot\-(\w+):" $DOCKER_COMPOSE_FILE || echo 0)
+if [ "$VOLUMES_EXISTS" -gt 3 ]; then
   echo "Volumes already exists, skipped"
 else
   choose_volumes

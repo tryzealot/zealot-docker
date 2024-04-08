@@ -4,7 +4,5 @@ volumes:
     external: true
   zealot-backup:
     external: true
-  zealot-redis:
-    external: true
   zealot-postgres:
     external: true

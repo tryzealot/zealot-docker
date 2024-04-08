@@ -5,9 +5,8 @@ x-restart-policy: &restart_policy
 
 x-defaults: &defaults
   <<: *restart_policy
-  image: ghcr.io/tryzealot/zealot:nightly
+  image: ghcr.io/tryzealot/zealot:latest
   depends_on:
-    - redis
     - postgres
   env_file: .env
   volumes:
@@ -25,14 +24,6 @@ x-defaults: &defaults
       mode: "non-blocking"
 
 services:
-  redis:
-    <<: *restart_policy
-    image: redis:7-alpine
-    command: redis-server
-    volumes:
-      - zealot-redis:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
   postgres:
     <<: *restart_policy
     image: postgres:14-alpine
