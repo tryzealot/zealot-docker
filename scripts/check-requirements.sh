@@ -11,7 +11,7 @@ function ver () { echo "$@" | awk -F. '{ printf("%d%03d%03d", $1,$2,$3); }'; }
 ## Check docker compose version (v1 and v2)
 ##
 function get_docker_compose_version () {
-  COMPOSE_VERSION=$(docker-compose version | head -n1 | sed -E 's/^.* version:? v?([0-9.]+),?.*$/\1/')
+  COMPOSE_VERSION=$(dc_base version | head -n1 | sed -E 's/^.* version:? v?([0-9.]+),?.*$/\1/')
 }
 
 ##
