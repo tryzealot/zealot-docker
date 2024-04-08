@@ -1,0 +1,33 @@
+name: 部署脚本问题 | Deploy script issue report
+description: 仅涉及本仓库部署脚本相关问题 | Only if there is any problem related to deployment scripts
+  of this warehouse
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **请务必保证提出的问题已经仔细阅读了[部署](https://zealot.ews.im/#/deployment)和[参数配置](https://zealot.ews.im/#/configuration)文档，否则不予提供技术帮助 !!!**
+
+        为了更好的发现问题，请认真填写下面的选项，感谢您付出的时间！
+        Thanks for taking the time to fill out this bug report!
+  - type: checkboxes
+    id: document
+    attributes:
+      label: 已阅读文档 | Read the document
+      description: 提交本问题标识你已经阅读部署和配置文档 | By submitting this issue, you read our [deployment and configuration](https://zealot.ews.im)
+      options:
+        - label: 已阅读 | Yes
+          required: true
+  - type: textarea
+    attributes:
+      label: 描述 | Description
+      description: 请描述你的问题，尽可能提供[最小化重现](https://antfu.me/posts/why-reproductions-are-required-zh) | Please describe your bug and provide [minimal reproductions](https://antfu.me/posts/why-reproductions-are-required).
+  - type: textarea
+    id: logs
+    attributes:
+      label: 部署脚本日志 | deploy log output
+      description: |
+        请直接复制粘贴生成的 `zealot_install_log-****.txt` 日志文件内容
+        Add the content of generated `zealot_install_log-****.txt` file.
+      render: shell
