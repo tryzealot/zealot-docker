@@ -1,12 +1,23 @@
 set -euo pipefail
 test "${DEBUG:-}" && set -x
 
+# Override any user-supplied umask that could cause problems.
+umask 002
+
 log_file="zealot_install_log-`date +'%Y-%m-%d_%H-%M-%S'`.txt"
 exec &> >(tee -a "$log_file")
 
+# Allow `.env` overrides using the `.env.custom` file.
+# We pass this to docker compose in a couple places.
+if [[ -f .env.custom ]]; then
+  _ENV=.env.custom
+else
+  _ENV=.env
+fi
+
 MINIMIZE_DOWNTIME="${MINIMIZE_DOWNTIME:-}"
 
-ZEALOT_TAG=nightly
+ZEALOT_TAG=latest
 ZEALOT_USE_SSL=false
 
 ZEALOT_ROOT=$(dirname $0)
@@ -33,10 +44,6 @@ else
   _group="▶ "
   _endgroup=""
 fi
-
-dc_base="$(docker compose version &> /dev/null && echo 'docker compose' || echo 'docker-compose')"
-dc="$dc_base --ansi never --env-file ${ENV_FILE}"
-dcr="$dc run --rm"
 
 ##
 ## Current OS name

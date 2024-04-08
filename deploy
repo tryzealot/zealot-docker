@@ -5,20 +5,31 @@
 # example: ./deploy
 # example: ./deploy --skip-update
 #
-# Mostly of scripts fork from https://github.com/getsentry/onpremise
-# Original License: https://github.com/getsentry/onpremise/blob/master/LICENSE
+# Mostly of scripts fork from https://github.com/getsentry/self-hosted
+# Original License: https://github.com/getsentry/self-hosted/blob/master/LICENSE.md
+
+set -eE
 
 source "$(dirname $0)/scripts/function.sh"
 
 source "scripts/load-cli-parser.sh"
+source "scripts/detect-platform.sh"
+source "scripts/dc-detect-version.sh"
 source "scripts/error-handling.sh"
-source "scripts/check-requirements.sh"
+
+# We set the trap at the top level so that we get better tracebacks.
+trap_with_arg cleanup ERR INT TERM EXIT
+source "scripts/check-latest-commit.sh"
+source "scripts/check-minimum-requirements.sh"
+
+# Let's go! Start impacting things.
+source "scripts/turn-things-off.sh"
 source "scripts/generate-env-file.sh"
 source "scripts/generate-secret-key.sh"
 source "scripts/generate-domain.sh"
 source "scripts/configure-cert.sh"
 source "scripts/generate-compose-file.sh"
+source "scripts/configure-zealot-version.sh"
 source "scripts/configure-volumes.sh"
 source "scripts/fetch-docker-images.sh"
-source "scripts/turn-things-off.sh"
 source "scripts/wrap-up.sh"

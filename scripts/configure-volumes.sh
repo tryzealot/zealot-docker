@@ -13,7 +13,6 @@ create_docker_volumes () {
   echo "Created $(docker volume create --name=zealot-uploads)."
   echo "Created $(docker volume create --name=zealot-backup)."
   echo "Created $(docker volume create --name=zealot-postgres)."
-  echo "Created $(docker volume create --name=zealot-redis)."
 
   cat $TEMPLATE_DOCKER_COMPOSE_PATH/external-volumes.yml >> $DOCKER_COMPOSE_FILE
   echo "Exteral volumes write to file: $DOCKER_COMPOSE_FILE"
@@ -30,12 +29,10 @@ configure_local_docker_volumes() {
   else
     mkdir -p "$stored/zealot/uploads"
     mkdir -p "$stored/zealot/backup"
-    mkdir -p "$stored/redis"
     mkdir -p "$stored/postgres"
 
     sed -i -e 's|zealot-uploads|'"$stored"'/uploads|g' $DOCKER_COMPOSE_FILE
     sed -i -e 's|zealot-backup|'"$stored"'/backup|g' $DOCKER_COMPOSE_FILE
-    sed -i -e 's|zealot-redis|'"$stored"'/redis|g' $DOCKER_COMPOSE_FILE
     sed -i -e 's|zealot-postgres|'"$stored"'/postgres|g' $DOCKER_COMPOSE_FILE
     clean_sed_temp_file $DOCKER_COMPOSE_FILE
 
@@ -65,9 +62,8 @@ choose_volumes () {
   fi
 }
 
-
-VOLUMES_EXISTS=$(grep -qcE "^(\s+)zealot\-(\w+):" $DOCKER_COMPOSE_FILE || echo 0)
-if [ "$VOLUMES_EXISTS" -eq 4 ]; then
+VOLUMES_EXISTS=$(grep -cE "^(\s+)zealot\-(\w+):" $DOCKER_COMPOSE_FILE || echo 0)
+if [ "$VOLUMES_EXISTS" -gt 3 ]; then
   echo "Volumes already exists, skipped"
 else
   choose_volumes

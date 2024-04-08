@@ -22,12 +22,6 @@ backup_db () {
   docker cp zealot-postgresql:/tmp/db.dump $BACKUP_DIR
 }
 
-backup_redis () {
-  echo ""
-  echo "== Backup redis =="
-  docker cp zealot-redis:/data/dump.rdb $BACKUP_DIR/redis.rdb
-}
-
 backup_zealot () {
   echo ""
   echo "== Backup zealot data =="
@@ -43,12 +37,11 @@ compress () {
 cleanup () {
   echo
   echo "== Cleaning up =="
-  rm -rf $BACKUP_DIR/uploads $BACKUP_DIR/db.dump $BACKUP_DIR/redis.rdb
+  rm -rf $BACKUP_DIR/uploads $BACKUP_DIR/db.dump
 }
 trap cleanup ERR INT TERM HUP QUIT
 
 backup_db
-backup_redis
 backup_zealot
 compress
 cleanup
