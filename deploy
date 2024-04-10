@@ -23,8 +23,8 @@ source "scripts/check-latest-commit.sh"
 source "scripts/check-minimum-requirements.sh"
 
 # Let's go! Start impacting things.
-source "scripts/turn-things-off.sh"
 source "scripts/generate-env-file.sh"
+source "scripts/turn-things-off.sh"
 source "scripts/generate-secret-key.sh"
 source "scripts/generate-domain.sh"
 source "scripts/configure-cert.sh"
