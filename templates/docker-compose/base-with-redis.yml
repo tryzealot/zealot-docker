@@ -1,0 +1,46 @@
+version: "3.8"
+
+x-restart-policy: &restart_policy
+  restart: unless-stopped
+
+x-defaults: &defaults
+  <<: *restart_policy
+  image: ghcr.io/tryzealot/zealot:latest
+  depends_on:
+    - postgres
+    - redis
+  env_file: .env
+  volumes:
+    - zealot-uploads:/app/public/uploads
+    - zealot-backup:/app/public/backup
+    - ./log:/app/log
+  healthcheck:
+    test: ["CMD-SHELL", "wget -q --spider --proxy=off localhost/health || exit 1"]
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "1g"
+      max-file: "10"
+      max-buffer-size: "4m"
+      mode: "non-blocking"
+
+services:
+  redis:
+    <<: *restart_policy
+    image: redis:7-alpine
+    command: redis-server
+    volumes:
+      - zealot-redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+  postgres:
+    <<: *restart_policy
+    image: postgres:14-alpine
+    volumes:
+      - zealot-postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ze@l0t
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+  zealot:
+    <<: *defaults

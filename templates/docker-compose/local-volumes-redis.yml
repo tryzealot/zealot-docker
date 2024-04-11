@@ -1,0 +1,26 @@
+
+volumes:
+  zealot-uploads:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tmp/zealot/uploads
+  zealot-backup:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tmp/zealot/backup
+  zealot-postgres:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tmp/postgres
+  zealot-redis:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tmp/redis

@@ -14,7 +14,13 @@ create_docker_volumes () {
   echo "Created $(docker volume create --name=zealot-backup)."
   echo "Created $(docker volume create --name=zealot-postgres)."
 
-  cat $TEMPLATE_DOCKER_COMPOSE_PATH/external-volumes.yml >> $DOCKER_COMPOSE_FILE
+  if [ "${REDIS_ENABLED_LEGACY:-0}" == 1 ]; then
+    echo "Created $(docker volume create --name=zealot-redis)."
+    cat $TEMPLATE_DOCKER_COMPOSE_PATH/external-volumes-redis.yml >> $DOCKER_COMPOSE_FILE
+  else
+    cat $TEMPLATE_DOCKER_COMPOSE_PATH/external-volumes.yml >> $DOCKER_COMPOSE_FILE
+  fi
+
   echo "Exteral volumes write to file: $DOCKER_COMPOSE_FILE"
 }
 
@@ -27,13 +33,18 @@ configure_local_docker_volumes() {
     echo "Read ZEALOT_STORED_PATH failed, Quitting"
     exit
   else
+    if [ "${REDIS_ENABLED_LEGACY:-0}" == 1 ]; then
+      cat $TEMPLATE_DOCKER_COMPOSE_PATH/local-volumes-redis.yml >> $DOCKER_COMPOSE_FILE
+      mkdir -p "$stored/redis"
+    else
+      cat $TEMPLATE_DOCKER_COMPOSE_PATH/local-volumes.yml >> $DOCKER_COMPOSE_FILE
+    fi
+
     mkdir -p "$stored/zealot/uploads"
     mkdir -p "$stored/zealot/backup"
     mkdir -p "$stored/postgres"
 
-    sed -i -e 's|zealot-uploads|'"$stored"'/uploads|g' $DOCKER_COMPOSE_FILE
-    sed -i -e 's|zealot-backup|'"$stored"'/backup|g' $DOCKER_COMPOSE_FILE
-    sed -i -e 's|zealot-postgres|'"$stored"'/postgres|g' $DOCKER_COMPOSE_FILE
+    sed -i -e 's|/tmp|'"$stored"'|g' $DOCKER_COMPOSE_FILE
     clean_sed_temp_file $DOCKER_COMPOSE_FILE
 
     echo "Local volumes '$stored' write to file: $DOCKER_COMPOSE_FILE"
@@ -63,7 +74,7 @@ choose_volumes () {
 }
 
 VOLUMES_EXISTS=$(grep -cE "^(\s+)zealot\-(\w+):" $DOCKER_COMPOSE_FILE || echo 0)
-if [ "$VOLUMES_EXISTS" -gt 3 ]; then
+if [[ "$VOLUMES_EXISTS" -gt 3 ]]; then
   echo "Volumes already exists, skipped"
 else
   choose_volumes

@@ -1,0 +1,10 @@
+
+volumes:
+  zealot-uploads:
+    external: true
+  zealot-backup:
+    external: true
+  zealot-postgres:
+    external: true
+  zealot-redis:
+    external: true

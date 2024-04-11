@@ -5,7 +5,12 @@ if [ -f "$DOCKER_COMPOSE_FILE" ]; then
 else
   echo "# Generated on $(date)" > $DOCKER_COMPOSE_FILE
   echo "# USE SSL: ${ZEALOT_USE_SSL}" >> $DOCKER_COMPOSE_FILE
-  cat $TEMPLATE_DOCKER_COMPOSE_PATH/base.yml >> $DOCKER_COMPOSE_FILE
+
+  if [ "${REDIS_ENABLED_LEGACY:-0}" == 1 ]; then
+    cat $TEMPLATE_DOCKER_COMPOSE_PATH/base-with-redis.yml >> $DOCKER_COMPOSE_FILE
+  else
+    cat $TEMPLATE_DOCKER_COMPOSE_PATH/base.yml >> $DOCKER_COMPOSE_FILE
+  fi
 
   if [ "$ZEALOT_USE_SSL" == "false" ]; then
     echo "    ports:"  >> $DOCKER_COMPOSE_FILE

@@ -70,7 +70,7 @@ check_or_generate_selfsigned_ssl () {
 
       check_or_generate_caddyfile
 
-      if [ -z grep 'tls {$ZEALOT_CERT_EMAIL}' $CADDY_FILE ]; then
+      if [ grep 'tls {$ZEALOT_CERT_EMAIL}' $CADDY_FILE ]; then
         echo "CAN NOT read \$ZEALOT_CERT_EMAIL variable in $CADDY_FILE, abort"
         exit
       else
