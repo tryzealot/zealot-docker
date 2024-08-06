@@ -52,6 +52,25 @@ configure_local_docker_volumes() {
 }
 
 choose_volumes () {
+  set +u
+  echo "ZEALOT_FORCE_VOLUME=${ZEALOT_FORCE_VOLUME}"
+
+  if [ -n "$ZEALOT_FORCE_VOLUME" ]; then
+    case "$ZEALOT_FORCE_VOLUME" in
+      "docker" )
+        create_docker_volumes;;
+      "local" )
+        configure_local_docker_volumes;;
+      * )
+        echo "Invalid ZEALOT_FORCE_VOLUME value, Quitting"
+        exit
+        ;;
+    esac
+    set -u
+    return
+  fi
+  set -u
+
   printf "Which way do you choose to storage zealot data?\n\
   Use Docker [V]olumes (default)\n\
   Use [L]ocal file system\n"

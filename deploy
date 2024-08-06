@@ -10,6 +10,9 @@
 
 set -eE
 
+if [ -e "./env.sh" ]; then
+  source "./env.sh"
+fi
 source "$(dirname $0)/scripts/function.sh"
 
 source "scripts/load-cli-parser.sh"
