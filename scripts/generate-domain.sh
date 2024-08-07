@@ -14,9 +14,9 @@ fi
 if [ -z "$DOMAIN" ]; then
   echo "Read ZEALOT_DOMAIN failed, skipped"
 else
-  sed -i -e 's/^.*ZEALOT_DOMAIN=.*$/ZEALOT_DOMAIN='"$DOMAIN"'/' $ENV_FILE
-  clean_sed_temp_file $ENV_FILE
   if [ "$DOMAIN_FROM_USER" == "1" ]; then
+    sed -i -e 's/^.*ZEALOT_DOMAIN=.*$/ZEALOT_DOMAIN='"$DOMAIN"'/' $ENV_FILE
+    clean_sed_temp_file $ENV_FILE
     echo "Domain written to .env"
   fi
 fi
