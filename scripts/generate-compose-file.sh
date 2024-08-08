@@ -1,5 +1,7 @@
 echo "${_group}Generating docker-compose.file ..."
 
+ZEALOT_NO_SSL_PORT=${ZEALOT_NO_SSL_PORT:-"80"}
+
 if [ -f "$DOCKER_COMPOSE_FILE" ]; then
   echo "File already exists, skipped"
 else
@@ -14,7 +16,7 @@ else
 
   if [ "$ZEALOT_USE_SSL" == "false" ]; then
     echo "    ports:"  >> $DOCKER_COMPOSE_FILE
-    echo '      - "80:80"' >> $DOCKER_COMPOSE_FILE
+    echo '      - "'"${ZEALOT_NO_SSL_PORT}"':80"' >> $DOCKER_COMPOSE_FILE
   else
     cat $TEMPLATE_DOCKER_COMPOSE_PATH/cert.yml >> $DOCKER_COMPOSE_FILE
   fi
