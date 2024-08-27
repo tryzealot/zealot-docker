@@ -93,7 +93,6 @@ check_or_generate_selfsigned_ssl () {
 ##
 choose_deploy () {
   set +u
-  echo "ZEALOT_FORCE_SSL=${ZEALOT_FORCE_SSL}"
   if [ -n $ZEALOT_FORCE_SSL ]; then
     case "$ZEALOT_FORCE_SSL" in
       "letsencrypt" )
@@ -104,13 +103,10 @@ choose_deploy () {
         SSL_NAME=false
         ;;
       * )
-        echo "Invalid ZEALOT_FORCE_SSL value, Quitting"
-        exit
+        echo "ZEALOT_FORCE_SSL is not set, setup it."
         ;;
     esac
     echo "${_endgroup}"
-    set -u
-    return
   fi
   set -u
 
