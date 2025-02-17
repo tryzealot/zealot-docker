@@ -14,7 +14,7 @@ x-defaults: &defaults
     - zealot-backup:/app/public/backup
     - ./log:/app/log
   healthcheck:
-    test: ["CMD-SHELL", "wget -q --spider --proxy=off localhost/health || exit 1"]
+    test: ["CMD-SHELL", "wget -q --spider --proxy=off 127.0.0.1/health || exit 1"]
   logging:
     driver: "json-file"
     options:
