@@ -1,5 +1,15 @@
 echo "${_group}Configuring Docker volumes ..."
 
+detect_volumes_exists () {
+  local HAS_APP_VOLUME=$(docker volume ls | grep -v DRIVER | grep zealot- | wc -l 2> /dev/null)
+
+  # if gt 0, means zealot volumes exists, return 0
+  if [ $HAS_APP_VOLUME -gt 0 ]; then
+    echo "Zealot volumes already exists, skipped"
+    return 0
+  fi
+}
+
 ##
 ## Create docker volumes for zealot
 ##
@@ -9,6 +19,9 @@ create_docker_volumes () {
   if [ -z "$HAS_APP_VOLUME" ]; then
     docker volume rm zealot-app
   fi
+
+  # check if detect_volumes_exists, if not use below code flow
+  detect_volumes_exists && return 0
 
   echo "Created $(docker volume create --name=zealot-uploads)."
   echo "Created $(docker volume create --name=zealot-backup)."
